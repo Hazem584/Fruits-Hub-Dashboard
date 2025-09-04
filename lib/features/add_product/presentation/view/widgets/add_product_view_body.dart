@@ -41,7 +41,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                 keyboardType: TextInputType.text,
               ),
               verticalSpace(16),
-              ImageFiled(),
+              ImageFiled(onFileChanged: (image){},),
             ],
           ),
         ),
