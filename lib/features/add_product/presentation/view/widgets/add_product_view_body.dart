@@ -10,6 +10,7 @@ import 'package:fruits_hub_dashboard/features/add_product/presentation/manger/cu
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/app_text_form_filed.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/image_filed.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/is_featured_check_box.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/is_orgainc_check.dart';
 
 class AddProductViewBody extends StatefulWidget {
   const AddProductViewBody({super.key});
@@ -26,6 +27,10 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
   late String name, code, description;
   late num price;
   File? image;
+  late int expirationMonths;
+  late int numberOfCalories;
+  late num unitAmount;
+  bool isOrganic = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -62,6 +67,38 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
               verticalSpace(16),
               AppTextFormFiled(
                 onSaved: (value) {
+                  expirationMonths = int.parse(value!);
+                },
+                hintText: 'Expiration Months',
+                keyboardType: TextInputType.number,
+              ),
+              verticalSpace(16),
+              AppTextFormFiled(
+                onSaved: (value) {
+                  numberOfCalories = int.parse(value!);
+                },
+                hintText: 'Number Of Calories',
+                keyboardType: TextInputType.number,
+              ),
+              verticalSpace(16),
+              AppTextFormFiled(
+                onSaved: (value) {
+                  unitAmount = num.parse(value!);
+                },
+                hintText: 'Unit Amount',
+                keyboardType: TextInputType.number,
+              ),
+              verticalSpace(16),
+              AppTextFormFiled(
+                onSaved: (value) {
+                  expirationMonths = int.parse(value!);
+                },
+                hintText: 'Expiration Months',
+                keyboardType: TextInputType.number,
+              ),
+              verticalSpace(16),
+              AppTextFormFiled(
+                onSaved: (value) {
                   description = value!;
                 },
                 hintText: 'Product Description',
@@ -74,6 +111,15 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                 onChanged: (value) {
                   setState(() {
                     isFileAccepted = value;
+                  });
+                },
+              ),
+              verticalSpace(16),
+              IsOrganicCheckBox(
+                isOrganic: isOrganic,
+                onChanged: (value) {
+                  setState(() {
+                    isOrganic = value;
                   });
                 },
               ),
@@ -98,6 +144,10 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                         code: code,
                         isFeatured: isFileAccepted,
                         imagePath: image!,
+                        expirationMonths: expirationMonths,
+                        numberOfCalories: numberOfCalories,
+                        unitAmount: unitAmount.toInt(),
+                        isOrganic: isOrganic,
                       );
                       context.read<AddProductCubit>().addProduct(input);
                     } else {
@@ -111,6 +161,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                   }
                 },
               ),
+              verticalSpace(50),
             ],
           ),
         ),

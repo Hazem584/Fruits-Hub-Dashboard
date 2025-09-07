@@ -6,5 +6,7 @@ AppBar buildAppBar() {
     centerTitle: true,
     elevation: 0,
     backgroundColor: Colors.white,
+    scrolledUnderElevation: 0,
+    surfaceTintColor: Colors.white,
   );
 }

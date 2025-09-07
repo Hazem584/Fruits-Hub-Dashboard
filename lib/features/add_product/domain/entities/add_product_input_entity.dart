@@ -8,6 +8,12 @@ class AddProductInputEntity {
   final bool isFeatured;
   final File imagePath;
   final num price;
+  final int expirationMonths;
+  final bool isOrganic;
+  final int numberOfCalories;
+  final int unitAmount;
+  final num avgRating = 0;
+  final num ratingCounts = 0;
 
   AddProductInputEntity({
     required this.name,
@@ -17,6 +23,10 @@ class AddProductInputEntity {
     required this.code,
     required this.isFeatured,
     required this.imagePath,
+    required this.expirationMonths,
+    required this.numberOfCalories,
+    required this.unitAmount,
+    this.isOrganic = false,
   });
   AddProductInputEntity copyWith({
     String? name,
@@ -35,6 +45,10 @@ class AddProductInputEntity {
       isFeatured: isFeatured ?? this.isFeatured,
       imagePath: imagePath ?? this.imagePath,
       price: price ?? this.price,
+      expirationMonths: expirationMonths,
+      numberOfCalories: numberOfCalories,
+      unitAmount: unitAmount,
+      isOrganic: isOrganic,
     );
   }
 }

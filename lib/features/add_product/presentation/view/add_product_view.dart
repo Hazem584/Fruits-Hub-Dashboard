@@ -5,7 +5,7 @@ import 'package:fruits_hub_dashboard/core/repos/images_rpos/images_repo.dart';
 import 'package:fruits_hub_dashboard/core/repos/product_repo/product_repo.dart';
 import 'package:fruits_hub_dashboard/core/widgets/build_app_bar.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/manger/cubit/add_product_cubit.dart';
-import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/add_product_view_body.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/add_product_view_body_bloc_builder.dart';
 
 class AddProductView extends StatelessWidget {
   const AddProductView({super.key});
@@ -18,8 +18,10 @@ class AddProductView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(),
-        body: AddProductViewBody(),
+        body: AddProductViewBodyBlocBuilder(),
       ),
     );
   }
 }
+
+
