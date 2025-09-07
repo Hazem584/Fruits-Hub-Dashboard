@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruits_hub_dashboard/core/helper/spacing.dart';
 import 'package:fruits_hub_dashboard/core/theming/styles.dart';
 import 'package:fruits_hub_dashboard/core/widgets/app_text_button.dart';
 import 'package:fruits_hub_dashboard/features/add_product/domain/entities/add_product_input_entity.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/manger/cubit/add_product_cubit.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/app_text_form_filed.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/image_filed.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/is_featured_check_box.dart';
-
 
 class AddProductViewBody extends StatefulWidget {
   const AddProductViewBody({super.key});
@@ -56,7 +57,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                   code = value!.toLowerCase();
                 },
                 hintText: 'Product Code',
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.text,
               ),
               verticalSpace(16),
               AppTextFormFiled(
@@ -98,6 +99,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                         isFeatured: isFileAccepted,
                         imagePath: image!,
                       );
+                      context.read<AddProductCubit>().addProduct(input);
                     } else {
                       autovalidateMode = AutovalidateMode.always;
                       setState(() {});
