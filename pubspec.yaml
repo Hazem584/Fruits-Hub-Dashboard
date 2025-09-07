@@ -7,10 +7,13 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  dartz: ^0.10.1
   firebase_core: ^4.1.0
+  firebase_storage: ^13.0.1
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.3
+  flutter_svg: ^2.2.1
   image_picker: ^1.2.0
   skeletonizer: ^2.1.0+1
 
@@ -21,3 +24,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_assets:
+  assets_path: assets/
+  output_path: lib/core/utils/
+  filename: app_images.dart
