@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fruits_hub_dashboaerd/core/helper/spacing.dart';
-import 'package:fruits_hub_dashboaerd/core/theming/styles.dart';
-import 'package:fruits_hub_dashboaerd/features/add_product/presentation/view/widgets/custom_check_box.dart';
+import 'package:fruits_hub_dashboard/core/helper/spacing.dart';
+import 'package:fruits_hub_dashboard/core/theming/styles.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/custom_check_box.dart';
 
 class IsFeaturedCheckBox extends StatelessWidget {
   final bool isAccepted;

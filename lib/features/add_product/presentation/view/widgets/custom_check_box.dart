@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fruits_hub_dashboaerd/core/theming/app_colors.dart';
+import 'package:fruits_hub_dashboard/core/theming/app_colors.dart';
 
 class CustomCheckBox extends StatefulWidget {
   final bool value;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fruits_hub_dashboaerd/core/theming/styles.dart';
-import 'package:fruits_hub_dashboaerd/core/widgets/app_text_button.dart';
-import 'package:fruits_hub_dashboaerd/features/add_product/presentation/view/add_product_view.dart';
+import 'package:fruits_hub_dashboard/core/theming/styles.dart';
+import 'package:fruits_hub_dashboard/core/widgets/app_text_button.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/view/add_product_view.dart';
 
 class DashboardViewBody extends StatelessWidget {
   const DashboardViewBody({super.key});

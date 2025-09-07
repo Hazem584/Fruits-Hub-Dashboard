@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fruits_hub_dashboaerd/core/theming/app_colors.dart';
+import 'package:fruits_hub_dashboard/core/theming/app_colors.dart';
 
 import 'font_weight_helper.dart';
 

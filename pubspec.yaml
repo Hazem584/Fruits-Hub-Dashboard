@@ -1,4 +1,4 @@
-name: fruits_hub_dashboaerd
+name: fruits_hub_dashboard
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -7,6 +7,7 @@ environment:
   sdk: ^3.8.1
 
 dependencies:
+  bloc: ^9.0.0
   dartz: ^0.10.1
   firebase_core: ^4.1.0
   firebase_storage: ^13.0.1
@@ -14,7 +15,9 @@ dependencies:
     sdk: flutter
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.2.1
+  get_it: ^8.2.0
   image_picker: ^1.2.0
+  path: ^1.9.1
   skeletonizer: ^2.1.0+1
 
 dev_dependencies:

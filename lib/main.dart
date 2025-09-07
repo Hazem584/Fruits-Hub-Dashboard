@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fruits_hub_dashboaerd/core/helper/on_generate_routes.dart';
-import 'package:fruits_hub_dashboaerd/features/dashboard/views/dashboard_view.dart';
+import 'package:fruits_hub_dashboard/core/helper/on_generate_routes.dart';
+import 'package:fruits_hub_dashboard/features/dashboard/views/dashboard_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

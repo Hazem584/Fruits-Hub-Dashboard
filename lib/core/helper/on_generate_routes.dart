@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fruits_hub_dashboaerd/features/add_product/presentation/view/add_product_view.dart';
-import 'package:fruits_hub_dashboaerd/features/dashboard/views/dashboard_view.dart';
+import 'package:fruits_hub_dashboard/features/add_product/presentation/view/add_product_view.dart';
+import 'package:fruits_hub_dashboard/features/dashboard/views/dashboard_view.dart';
 
 Route<dynamic> onGenerateRoutes(RouteSettings settings) {
   switch (settings.name) {
