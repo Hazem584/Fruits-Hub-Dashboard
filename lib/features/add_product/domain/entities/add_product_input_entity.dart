@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:fruits_hub_dashboard/features/add_product/domain/entities/review_entity.dart';
+
 class AddProductInputEntity {
   final String name;
   final String description;
@@ -14,6 +16,7 @@ class AddProductInputEntity {
   final int unitAmount;
   final num avgRating = 0;
   final num ratingCounts = 0;
+  final List<ReviewEntity> reviews;
 
   AddProductInputEntity({
     required this.name,
@@ -27,6 +30,7 @@ class AddProductInputEntity {
     required this.numberOfCalories,
     required this.unitAmount,
     this.isOrganic = false,
+    required this.reviews,
   });
   AddProductInputEntity copyWith({
     String? name,
@@ -49,6 +53,7 @@ class AddProductInputEntity {
       numberOfCalories: numberOfCalories,
       unitAmount: unitAmount,
       isOrganic: isOrganic,
+      reviews: reviews,
     );
   }
 }
