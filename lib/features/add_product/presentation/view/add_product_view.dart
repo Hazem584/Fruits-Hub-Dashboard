@@ -18,7 +18,7 @@ class AddProductView extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: buildAppBar(),
-        body: AddProductViewBodyBlocBuilder(),
+        body: const AddProductViewBodyBlocBuilder(),
       ),
     );
   }

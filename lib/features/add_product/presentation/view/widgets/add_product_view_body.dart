@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruits_hub_dashboard/core/helper/spacing.dart';
 import 'package:fruits_hub_dashboard/core/theming/styles.dart';
 import 'package:fruits_hub_dashboard/core/widgets/app_text_button.dart';
-import 'package:fruits_hub_dashboard/features/add_product/domain/entities/add_product_input_entity.dart';
+import 'package:fruits_hub_dashboard/features/add_product/domain/entities/product_entity.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/manger/cubit/add_product_cubit.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/app_text_form_filed.dart';
 import 'package:fruits_hub_dashboard/features/add_product/presentation/view/widgets/image_filed.dart';
@@ -137,7 +137,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                   if (image != null) {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      AddProductInputEntity input = AddProductInputEntity(
+                      ProductEntity input = ProductEntity(
                         reviews: [],
                         name: name,
                         description: description,

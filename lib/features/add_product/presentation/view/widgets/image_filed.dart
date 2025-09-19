@@ -43,7 +43,7 @@ class _ImageFiledState extends State<ImageFiled> {
                 borderRadius: BorderRadius.circular(16),
                 child: imagePath != null
                     ? Image.file(imagePath!)
-                    : Icon(Icons.image_outlined, size: 200),
+                    : const Icon(Icons.image_outlined, size: 200),
               ),
             ),
             Visibility(
@@ -54,7 +54,7 @@ class _ImageFiledState extends State<ImageFiled> {
                   widget.onFileChanged?.call(imagePath);
                   setState(() {});
                 },
-                icon: Icon(Icons.remove_circle, color: Colors.red),
+                icon: const Icon(Icons.remove_circle, color: Colors.red),
               ),
             ),
           ],

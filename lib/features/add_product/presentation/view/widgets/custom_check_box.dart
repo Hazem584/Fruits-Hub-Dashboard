@@ -35,7 +35,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
           ),
         ),
         child: widget.value
-            ? Icon(Icons.check, size: 18, color: Colors.white)
+            ? const Icon(Icons.check, size: 18, color: Colors.white)
             : null,
       ),
     );

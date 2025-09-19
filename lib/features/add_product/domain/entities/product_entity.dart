@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fruits_hub_dashboard/features/add_product/domain/entities/review_entity.dart';
 
-class AddProductInputEntity {
+class ProductEntity {
   final String name;
   final String description;
   final String? imageUrl;
@@ -18,7 +18,7 @@ class AddProductInputEntity {
   final num ratingCounts = 0;
   final List<ReviewEntity> reviews;
 
-  AddProductInputEntity({
+  ProductEntity({
     required this.name,
     required this.description,
     required this.price,
@@ -32,7 +32,7 @@ class AddProductInputEntity {
     this.isOrganic = false,
     required this.reviews,
   });
-  AddProductInputEntity copyWith({
+  ProductEntity copyWith({
     String? name,
     String? description,
     String? imageUrl,
@@ -41,7 +41,7 @@ class AddProductInputEntity {
     File? imagePath,
     num? price,
   }) {
-    return AddProductInputEntity(
+    return ProductEntity(
       name: name ?? this.name,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,

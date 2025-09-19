@@ -22,7 +22,7 @@ class AddProductViewBodyBlocBuilder extends StatelessWidget {
       builder: (context, state) {
         return CustomProgressHud(
           isLoading: state is AddProductLoading,
-          child: AddProductViewBody(),
+          child: const AddProductViewBody(),
         );
       },
     );
