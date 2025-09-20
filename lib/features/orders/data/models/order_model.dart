@@ -10,9 +10,11 @@ class OrderModel {
   final ShippingAddressModel shippingAddress;
   final List<OrderProductModel> orderProductModels;
   final String paymentMethod;
-  final OrderEnum? status;
+  final OrderStatusEnum status;
+  final String orderId;
 
   OrderModel({
+    required this.orderId,
     required this.status,
     required this.totalPrice,
     required this.uId,
@@ -21,49 +23,84 @@ class OrderModel {
     required this.paymentMethod,
   });
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
-    // ✅ الطريقة الآمنة لتحويل String إلى Enum
-    status: _stringToOrderEnum(json['status']),
-    totalPrice: json['totalPrice'].toDouble(),
-    uId: json['uId'],
-    shippingAddress: ShippingAddressModel.fromJson(
-      json['shippingAddressModel'],
-    ),
-    orderProductModels: List<OrderProductModel>.from(
-      json['orderProductModels'].map((x) => OrderProductModel.fromJson(x)),
-    ),
-    paymentMethod: json['paymentMethod'],
-  );
-
-  // ✅ دالة مساعدة لتحويل String إلى OrderEnum بشكل آمن
-  static OrderEnum? _stringToOrderEnum(dynamic value) {
-    if (value == null) return OrderEnum.pending;
-
-    String statusString = value.toString().toLowerCase();
-
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
     try {
-      return OrderEnum.values.firstWhere(
-        (e) => e.name.toLowerCase() == statusString,
-        orElse: () => OrderEnum.pending, // ✅ قيمة افتراضية
+      return OrderModel(
+        status: _stringToOrderEnum(json['status']) ?? OrderStatusEnum.pending,
+        totalPrice: _safeDoubleConversion(json['totalPrice']),
+        uId: json['uId']?.toString() ?? '',
+        orderId: json['orderId']?.toString() ?? '',
+        shippingAddress: ShippingAddressModel.fromJson(
+          json['shippingAddressModel'] ?? {},
+        ),
+        orderProductModels: _parseOrderProducts(json['orderProductModels']),
+        paymentMethod: json['paymentMethod']?.toString() ?? '',
       );
     } catch (e) {
-      return OrderEnum.pending;
+      print('Error parsing OrderModel from JSON: $e');
+      rethrow;
     }
   }
 
-  toJson() => {
+  // ✅ دالة مساعدة لتحويل List الخاص بالمنتجات
+  static List<OrderProductModel> _parseOrderProducts(dynamic productsJson) {
+    if (productsJson == null) return <OrderProductModel>[];
+
+    if (productsJson is! List) return <OrderProductModel>[];
+
+    try {
+      return productsJson
+          .map<OrderProductModel>((json) => OrderProductModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      print('Error parsing order products: $e');
+      return <OrderProductModel>[];
+    }
+  }
+
+  // ✅ دالة مساعدة آمنة لتحويل إلى double
+  static double _safeDoubleConversion(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      return double.tryParse(value) ?? 0.0;
+    }
+    return 0.0;
+  }
+
+  // ✅ دالة مساعدة لتحويل String إلى OrderEnum بشكل آمن
+  static OrderStatusEnum? _stringToOrderEnum(dynamic value) {
+    if (value == null) return null;
+
+    String statusString = value.toString().toLowerCase().trim();
+
+    try {
+      return OrderStatusEnum.values.firstWhere(
+        (e) => e.name.toLowerCase() == statusString,
+        orElse: () => OrderStatusEnum.pending,
+      );
+    } catch (e) {
+      print('Failed to parse order status: $value');
+      return OrderStatusEnum.pending;
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
     'totalPrice': totalPrice,
     'uId': uId,
-    'status': status?.name ?? 'pending', // ✅ استخدام .name بدلاً من toString()
-    'date': DateTime.now().toString(),
+    'orderId': orderId,
+    'status': status.name,
+    'date': DateTime.now().toIso8601String(),
     'shippingAddressModel': shippingAddress.toJson(),
     'orderProductModels': orderProductModels.map((e) => e.toJson()).toList(),
     'paymentMethod': paymentMethod,
   };
 
   OrderEntity toEntity() => OrderEntity(
+    orderID: orderId,
     totalPrice: totalPrice,
-    status: status ?? OrderEnum.pending, // ✅ قيمة افتراضية بسيطة
+    status: status,
     uId: uId,
     shippingAddress: shippingAddress.toEntity(),
     orderProductModels: orderProductModels
@@ -71,4 +108,30 @@ class OrderModel {
         .toList(),
     paymentMethod: paymentMethod,
   );
+
+  // Copy with method
+  OrderModel copyWith({
+    String? orderId,
+    double? totalPrice,
+    String? uId,
+    ShippingAddressModel? shippingAddress,
+    List<OrderProductModel>? orderProductModels,
+    String? paymentMethod,
+    OrderStatusEnum? status,
+  }) {
+    return OrderModel(
+      orderId: orderId ?? this.orderId,
+      totalPrice: totalPrice ?? this.totalPrice,
+      uId: uId ?? this.uId,
+      shippingAddress: shippingAddress ?? this.shippingAddress,
+      orderProductModels: orderProductModels ?? this.orderProductModels,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      status: status ?? this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'OrderModel{orderId: $orderId, totalPrice: $totalPrice, status: ${status.name}}';
+  }
 }

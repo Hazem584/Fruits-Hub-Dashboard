@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fruits_hub_dashboard/core/enums/order_enum.dart';
 import 'package:fruits_hub_dashboard/features/orders/domain/entities/order_entity.dart';
+import 'package:fruits_hub_dashboard/features/orders/presentation/views/widgets/order_action_buttons.dart';
 
 class OrderItemWidget extends StatelessWidget {
   final OrderEntity orderEntity;
@@ -239,6 +240,8 @@ class OrderItemWidget extends StatelessWidget {
                 },
               ),
             ),
+            const SizedBox(height: 16),
+            OrderActionButtons(orderModel: orderEntity),
           ],
         ),
       ),
@@ -246,7 +249,7 @@ class OrderItemWidget extends StatelessWidget {
   }
 
   // Build Status Chip with Colors and Arabic Text
-  Widget _buildStatusChip(OrderEnum? status) {
+  Widget _buildStatusChip(OrderStatusEnum? status) {
     final statusInfo = _getStatusInfo(status);
 
     return Container(
@@ -274,33 +277,33 @@ class OrderItemWidget extends StatelessWidget {
   }
 
   // Get Status Information (Color, Icon, Text)
-  Map<String, dynamic> _getStatusInfo(OrderEnum? status) {
+  Map<String, dynamic> _getStatusInfo(OrderStatusEnum? status) {
     switch (status) {
-      case OrderEnum.pending:
+      case OrderStatusEnum.pending:
         return {
           'color': Colors.orange,
           'icon': Icons.access_time,
           'text': 'قيد الانتظار',
         };
-      case OrderEnum.accepted:
+      case OrderStatusEnum.accepted:
         return {
           'color': Colors.blue,
           'icon': Icons.check_circle_outline,
           'text': 'مقبول',
         };
-      case OrderEnum.shipped:
+      case OrderStatusEnum.shipped:
         return {
           'color': Colors.purple,
           'icon': Icons.local_shipping,
           'text': 'تم الشحن',
         };
-      case OrderEnum.delivered:
+      case OrderStatusEnum.delivered:
         return {
           'color': Colors.green,
           'icon': Icons.done_all,
           'text': 'تم التسليم',
         };
-      case OrderEnum.cancelled:
+      case OrderStatusEnum.cancelled:
         return {'color': Colors.red, 'icon': Icons.cancel, 'text': 'ملغي'};
       default:
         return {

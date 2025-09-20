@@ -28,146 +28,26 @@ class FirestoreService implements DatabaseService {
     Map<String, dynamic>? query,
   }) async {
     try {
-      if (documentId != null) {
-        // Get single document
-        DocumentSnapshot<Map<String, dynamic>> doc = await firestore
-            .collection(path)
-            .doc(documentId)
-            .get();
-
-        if (doc.exists) {
-          final data = doc.data()!;
-          data['id'] = doc.id; // إضافة الـ ID للبيانات
-          return data;
+      // 🔧 إصلاح: تحليل المسار إذا كان يحتوي على collection/document
+      if (path.contains('/') && documentId == null) {
+        // تحليل المسار: orders/documentId
+        final pathParts = path.split('/');
+        if (pathParts.length == 2) {
+          final collectionPath = pathParts[0];
+          final docId = pathParts[1];
+          print('Parsed path - Collection: $collectionPath, Document: $docId');
+          return await _getSingleDocument(collectionPath, docId);
         } else {
-          return null;
+          throw Exception('Invalid path format: $path');
         }
+      }
+      
+      if (documentId != null) {
+        return await _getSingleDocument(path, documentId);
       } else {
-        // Get collection with optional query
-        Query<Map<String, dynamic>> collectionRef = firestore.collection(path);
-
-        if (query != null) {
-          // Apply orderBy
-          if (query['orderBy'] != null) {
-            final String orderByField = query['orderBy'] as String;
-            final bool descending = query['descending'] as bool? ?? false;
-            collectionRef = collectionRef.orderBy(
-              orderByField,
-              descending: descending,
-            );
-          }
-
-          // Apply where clause
-          if (query['where'] != null) {
-            final Map<String, dynamic> whereClause =
-                query['where'] as Map<String, dynamic>;
-            whereClause.forEach((field, value) {
-              if (value is Map &&
-                  value.containsKey('operator') &&
-                  value.containsKey('value')) {
-                final String operator = value['operator'] as String;
-                final dynamic operatorValue = value['value'];
-
-                switch (operator) {
-                  case '==':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isEqualTo: operatorValue,
-                    );
-                    break;
-                  case '!=':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isNotEqualTo: operatorValue,
-                    );
-                    break;
-                  case '>':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isGreaterThan: operatorValue,
-                    );
-                    break;
-                  case '<':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isLessThan: operatorValue,
-                    );
-                    break;
-                  case '>=':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isGreaterThanOrEqualTo: operatorValue,
-                    );
-                    break;
-                  case '<=':
-                    collectionRef = collectionRef.where(
-                      field,
-                      isLessThanOrEqualTo: operatorValue,
-                    );
-                    break;
-                  case 'in':
-                    collectionRef = collectionRef.where(
-                      field,
-                      whereIn: operatorValue,
-                    );
-                    break;
-                  case 'not-in':
-                    collectionRef = collectionRef.where(
-                      field,
-                      whereNotIn: operatorValue,
-                    );
-                    break;
-                  case 'array-contains':
-                    collectionRef = collectionRef.where(
-                      field,
-                      arrayContains: operatorValue,
-                    );
-                    break;
-                }
-              } else {
-                // Simple equality check
-                collectionRef = collectionRef.where(field, isEqualTo: value);
-              }
-            });
-          }
-
-          // Apply limit
-          if (query['limit'] != null) {
-            final int limit = query['limit'] as int;
-            collectionRef = collectionRef.limit(limit);
-          }
-
-          // Apply startAfter for pagination
-          if (query['startAfter'] != null) {
-            collectionRef = collectionRef.startAfterDocument(
-              query['startAfter'] as DocumentSnapshot,
-            );
-          }
-        }
-
-        QuerySnapshot<Map<String, dynamic>> querySnapshot = await collectionRef
-            .get();
-
-        // Debug: طباعة عدد النتائج
-        print('Number of documents fetched: ${querySnapshot.docs.length}');
-
-        final List<Map<String, dynamic>> results = querySnapshot.docs.map((
-          doc,
-        ) {
-          final data = doc.data();
-          data['id'] = doc.id; // Add document ID to the data
-
-          // Debug: طباعة البيانات
-          print('Document data: $data');
-
-          return data;
-        }).toList();
-
-        print('Final results count: ${results.length}');
-        return results;
+        return await _getCollection(path, query);
       }
     } catch (e) {
-      print('Error in getData: $e'); // Debug
       throw Exception('Failed to get data: $e');
     }
   }
@@ -188,22 +68,259 @@ class FirestoreService implements DatabaseService {
     }
   }
 
-  // Additional useful methods you might want to add:
+  @override
+  Stream<List<Map<String, dynamic>>> streamData({
+    required String path,
+    Map<String, dynamic>? query,
+  }) {
+    try {
+      Query<Map<String, dynamic>> collectionRef = firestore.collection(path);
 
-  /// Update specific fields in a document
+      if (query != null) {
+        collectionRef = _applyQueryFilters(collectionRef, query);
+      }
+
+      return collectionRef.snapshots().map((snapshot) {
+        return snapshot.docs.map((doc) {
+          final data = doc.data();
+          data['id'] = doc.id;
+          return data;
+        }).toList();
+      });
+    } catch (e) {
+      return Stream.error(Exception('Failed to stream data: $e'));
+    }
+  }
+
+  @override
   Future<void> updateData({
     required String path,
-    required String documentId,
     required Map<String, dynamic> data,
+    String? documentId,
   }) async {
     try {
-      await firestore.collection(path).doc(documentId).update(data);
+      print('🔧 UpdateData called with:');
+      print('Path: $path');
+      print('DocumentId: $documentId');
+      print('Data: $data');
+      
+      // 🔧 إصلاح: تحليل المسار إذا كان يحتوي على collection/document
+      if (path.contains('/') && documentId == null) {
+        final pathParts = path.split('/');
+        if (pathParts.length == 2) {
+          final collectionPath = pathParts[0];
+          final docId = pathParts[1];
+          print('Parsed - Collection: $collectionPath, Document: $docId');
+          await firestore.collection(collectionPath).doc(docId).update(data);
+          return;
+        } else {
+          throw Exception('Invalid path format: $path');
+        }
+      }
+      
+      // الطريقة التقليدية
+      if (documentId != null) {
+        await firestore.collection(path).doc(documentId).update(data);
+      } else {
+        throw Exception('Document ID is required for update operation');
+      }
     } catch (e) {
+      print('UpdateData error: $e');
       throw Exception('Failed to update data: $e');
     }
   }
 
-  /// Delete a document
+  // إضافة setData method
+  Future<void> setData({
+    required String path,
+    required Map<String, dynamic> data,
+    String? documentId,
+    bool merge = false,
+  }) async {
+    try {
+      print('🔧 SetData called with:');
+      print('Path: $path');
+      print('DocumentId: $documentId');
+      print('Merge: $merge');
+      
+      if (documentId != null) {
+        await firestore
+            .collection(path)
+            .doc(documentId)
+            .set(data, SetOptions(merge: merge));
+      } else {
+        await firestore.collection(path).add(data);
+      }
+    } catch (e) {
+      print('SetData error: $e');
+      throw Exception('Failed to set data: $e');
+    }
+  }
+
+  // ========== دوال مساعدة خاصة ==========
+
+  /// الحصول على مستند واحد
+  Future<Map<String, dynamic>?> _getSingleDocument(
+    String path,
+    String documentId,
+  ) async {
+    print('Getting single document - Collection: $path, Doc: $documentId');
+    DocumentSnapshot<Map<String, dynamic>> doc = await firestore
+        .collection(path)
+        .doc(documentId)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data()!;
+      data['id'] = doc.id;
+      print('Document found with data keys: ${data.keys.toList()}');
+      return data;
+    }
+    print('Document not found');
+    return null;
+  }
+
+  /// الحصول على مجموعة من المستندات
+  Future<List<Map<String, dynamic>>> _getCollection(
+    String path,
+    Map<String, dynamic>? query,
+  ) async {
+    Query<Map<String, dynamic>> collectionRef = firestore.collection(path);
+
+    if (query != null) {
+      collectionRef = _applyQueryFilters(collectionRef, query);
+    }
+
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await collectionRef
+        .get();
+
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id;
+      return data;
+    }).toList();
+  }
+
+  /// تطبيق فلاتر الاستعلام
+  Query<Map<String, dynamic>> _applyQueryFilters(
+    Query<Map<String, dynamic>> collectionRef,
+    Map<String, dynamic> query,
+  ) {
+    // تطبيق orderBy
+    if (query['orderBy'] != null) {
+      final String orderByField = query['orderBy'] as String;
+      final bool descending = query['descending'] as bool? ?? false;
+      collectionRef = collectionRef.orderBy(
+        orderByField,
+        descending: descending,
+      );
+    }
+
+    // تطبيق where clause
+    if (query['where'] != null) {
+      final Map<String, dynamic> whereClause =
+          query['where'] as Map<String, dynamic>;
+      collectionRef = _applyWhereClause(collectionRef, whereClause);
+    }
+
+    // تطبيق limit
+    if (query['limit'] != null) {
+      final int limit = query['limit'] as int;
+      collectionRef = collectionRef.limit(limit);
+    }
+
+    // تطبيق startAfter للتقسيم
+    if (query['startAfter'] != null) {
+      collectionRef = collectionRef.startAfterDocument(
+        query['startAfter'] as DocumentSnapshot,
+      );
+    }
+
+    return collectionRef;
+  }
+
+  /// تطبيق شروط Where
+  Query<Map<String, dynamic>> _applyWhereClause(
+    Query<Map<String, dynamic>> collectionRef,
+    Map<String, dynamic> whereClause,
+  ) {
+    whereClause.forEach((field, value) {
+      if (value is Map &&
+          value.containsKey('operator') &&
+          value.containsKey('value')) {
+        final String operator = value['operator'] as String;
+        final dynamic operatorValue = value['value'];
+
+        switch (operator) {
+          case '==':
+            collectionRef = collectionRef.where(
+              field,
+              isEqualTo: operatorValue,
+            );
+            break;
+          case '!=':
+            collectionRef = collectionRef.where(
+              field,
+              isNotEqualTo: operatorValue,
+            );
+            break;
+          case '>':
+            collectionRef = collectionRef.where(
+              field,
+              isGreaterThan: operatorValue,
+            );
+            break;
+          case '<':
+            collectionRef = collectionRef.where(
+              field,
+              isLessThan: operatorValue,
+            );
+            break;
+          case '>=':
+            collectionRef = collectionRef.where(
+              field,
+              isGreaterThanOrEqualTo: operatorValue,
+            );
+            break;
+          case '<=':
+            collectionRef = collectionRef.where(
+              field,
+              isLessThanOrEqualTo: operatorValue,
+            );
+            break;
+          case 'in':
+            collectionRef = collectionRef.where(field, whereIn: operatorValue);
+            break;
+          case 'not-in':
+            collectionRef = collectionRef.where(
+              field,
+              whereNotIn: operatorValue,
+            );
+            break;
+          case 'array-contains':
+            collectionRef = collectionRef.where(
+              field,
+              arrayContains: operatorValue,
+            );
+            break;
+          case 'array-contains-any':
+            collectionRef = collectionRef.where(
+              field,
+              arrayContainsAny: operatorValue,
+            );
+            break;
+          default:
+            throw ArgumentError('Unsupported operator: $operator');
+        }
+      } else {
+        collectionRef = collectionRef.where(field, isEqualTo: value);
+      }
+    });
+
+    return collectionRef;
+  }
+
+  /// حذف مستند
   Future<void> deleteData({
     required String path,
     required String documentId,
@@ -215,38 +332,11 @@ class FirestoreService implements DatabaseService {
     }
   }
 
-  /// Get real-time updates for a document
+  /// الحصول على stream لمستند واحد
   Stream<DocumentSnapshot<Map<String, dynamic>>> getDocumentStream({
     required String path,
     required String documentId,
   }) {
     return firestore.collection(path).doc(documentId).snapshots();
-  }
-
-  /// Get real-time updates for a collection
-  Stream<QuerySnapshot<Map<String, dynamic>>> getCollectionStream({
-    required String path,
-    Map<String, dynamic>? query,
-  }) {
-    Query<Map<String, dynamic>> collectionRef = firestore.collection(path);
-
-    if (query != null) {
-      // Apply the same query logic as in getData
-      if (query['orderBy'] != null) {
-        final String orderByField = query['orderBy'] as String;
-        final bool descending = query['descending'] as bool? ?? false;
-        collectionRef = collectionRef.orderBy(
-          orderByField,
-          descending: descending,
-        );
-      }
-
-      if (query['limit'] != null) {
-        final int limit = query['limit'] as int;
-        collectionRef = collectionRef.limit(limit);
-      }
-    }
-
-    return collectionRef.snapshots();
   }
 }

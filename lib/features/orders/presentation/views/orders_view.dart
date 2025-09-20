@@ -4,7 +4,9 @@ import 'package:fruits_hub_dashboard/core/di/get_it_service.dart';
 import 'package:fruits_hub_dashboard/core/helper/get_order_dummy_date.dart';
 import 'package:fruits_hub_dashboard/features/orders/domain/repos/orders_repo.dart';
 import 'package:fruits_hub_dashboard/features/orders/presentation/manger/fetch_orders/fetch_orders_cubit.dart';
+import 'package:fruits_hub_dashboard/features/orders/presentation/manger/update_orders/update_order_cubit.dart';
 import 'package:fruits_hub_dashboard/features/orders/presentation/views/widgets/orders_view_body.dart';
+import 'package:fruits_hub_dashboard/features/orders/presentation/views/widgets/update_order_builder.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class OrdersView extends StatelessWidget {
@@ -12,8 +14,15 @@ class OrdersView extends StatelessWidget {
   static const routeName = 'orders';
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => FetchOrdersCubit(getIt.get<OrdersRepo>()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<FetchOrdersCubit>(
+          create: (context) => FetchOrdersCubit(getIt.get<OrdersRepo>()),
+        ),
+        BlocProvider<UpdateOrderCubit>(
+          create: (context) => UpdateOrderCubit(getIt.get<OrdersRepo>()),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -24,7 +33,7 @@ class OrdersView extends StatelessWidget {
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.white,
         ),
-        body: const OrdersViewBodyBlocBuilder(),
+        body: const UpdateOrderBuilder(child: OrdersViewBodyBlocBuilder()),
       ),
     );
   }

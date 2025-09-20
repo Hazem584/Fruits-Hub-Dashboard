@@ -5,7 +5,7 @@ import 'package:fruits_hub_dashboard/features/orders/domain/entities/shipping_ad
 
 OrderEntity getOrderDummyDate() {
   return OrderEntity(
-    status: OrderEnum.pending,
+    status: OrderStatusEnum.pending,
     totalPrice: 250.0,
     uId: "user_12345",
     shippingAddress: ShippingAddressEntity(
@@ -43,5 +43,6 @@ OrderEntity getOrderDummyDate() {
       ),
     ],
     paymentMethod: "Cash on Delivery",
+    orderID: 'order_12345',
   );
 }

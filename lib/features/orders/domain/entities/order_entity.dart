@@ -5,12 +5,14 @@ import 'package:fruits_hub_dashboard/features/orders/domain/entities/shipping_ad
 class OrderEntity {
   final double totalPrice;
   final String uId;
+  final String orderID;
   final ShippingAddressEntity shippingAddress;
   final List<OrderProductEntity> orderProductModels;
   final String paymentMethod;
-  final OrderEnum? status; 
+  final OrderStatusEnum status;
 
   OrderEntity({
+    required this.orderID,
     required this.totalPrice,
     required this.status,
     required this.uId,

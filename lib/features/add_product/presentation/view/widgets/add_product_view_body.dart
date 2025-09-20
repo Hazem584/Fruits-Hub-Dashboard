@@ -91,14 +91,6 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
               verticalSpace(16),
               AppTextFormFiled(
                 onSaved: (value) {
-                  expirationMonths = int.parse(value!);
-                },
-                hintText: 'Expiration Months',
-                keyboardType: TextInputType.number,
-              ),
-              verticalSpace(16),
-              AppTextFormFiled(
-                onSaved: (value) {
                   description = value!;
                 },
                 hintText: 'Product Description',
